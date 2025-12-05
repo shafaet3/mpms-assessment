@@ -1,28 +1,23 @@
-import 'dotenv/config'; 
-import express, { Request, Response } from 'express';
+import 'dotenv/config'; // Load .env file first
 import mongoose from 'mongoose';
-import cors from 'cors';
+import app from './app'; // Import the configured Express app
 
-const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI as string; 
 
-// Middleware
-app.use(cors());
-app.use(express.json()); // Body parser
-
-// Simple route
-app.get('/', (req: Request, res: Response) => {
-  res.send('TypeScript Express Server is Running!');
-});
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI is not defined in the environment variables.');
+  process.exit(1);
+}
 
 // Database connection
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
+    
     // Start server after successful DB connection
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((error) => {
